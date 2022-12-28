@@ -5,7 +5,7 @@ from housing.exception import *
 from housing.entity.config_entity import*
 
 class Configuration:
-    def __init__(self,config_yaml_path,time_stamp):
+    def __init__(self,config_yaml_path=CONFIG_FILE_PATH,time_stamp=CURRENT_TIME_STAMP):
         try:
             self.config_info=read_yaml_file(config_yaml_path)
             self.training_pipeline_config=self.get_training_pipeline_config()
