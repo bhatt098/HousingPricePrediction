@@ -1,4 +1,9 @@
 Flask
 numpy 
 pandas 
+sklearn
+pandas
+six
+pyyaml
+scikit-learn
 -e .

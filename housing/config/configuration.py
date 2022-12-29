@@ -1,7 +1,7 @@
-from housing.constant import *
-from housing.util.util import *
+from housing.constant import*
+from housing.util.util import*
 import sys,os
-from housing.exception import *
+from housing.exception import*
 from housing.entity.config_entity import*
 
 class Configuration:

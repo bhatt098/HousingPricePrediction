@@ -1,7 +1,7 @@
 from housing.entity.config_entity import DataIngestionConfig
 from housing.entity.artifact_entity import DataIngestionArtifact
 
-from housing.exception import *
+from housing.exception import*
 import tarfile
 from six.moves import urllib
 import pandas as pd
@@ -55,14 +55,16 @@ class DataIngestion:
             raise HousingException(e,sys)
 
 
-    def train_test_split(self)->DataIngestionArtifact:
+    def split_data_as_train_test(self)->DataIngestionArtifact:
         try:
             raw_data_dir = self.data_ingestion_config.raw_data_dir
             file_name=os.listdir(raw_data_dir)[0]
             housing_file_path=os.path.join(raw_data_dir,file_name)
             df=pd.read_csv(housing_file_path)
-            X=df[:,:-1]   #independent
-            y=df[:,-1]    #dependent
+            print(df)
+            X=df.iloc[:,:-1]   #independent
+            print(X)
+            y=df.iloc[:,-1]    #dependent
             
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
             train_file_path = os.path.join(self.data_ingestion_config.ingested_train_dir, file_name)
