@@ -1,11 +1,17 @@
 from housing.entity.config_entity import DataIngestionConfig
 from housing.entity.artifact_entity import DataIngestionArtifact
+from housing.constant import*
 
 from housing.exception import*
 import tarfile
 from six.moves import urllib
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import zipfile
+import re
+import shutil
+from zipfile import ZipFile
+
 
 import os,sys
 
@@ -28,8 +34,41 @@ class DataIngestion:
 
             tgz_file_path = os.path.join(tgz_download_dir, housing_file_name)
 
+            #---------------# remove if zip file    -------------- 
+            # raw_data_dir = self.data_ingestion_config.raw_data_dir
+            # os.makedirs(raw_data_dir,exist_ok=True)
+
+            # urllib.request.urlretrieve(download_url, raw_data_dir)  
+            #--------------------------------------------------------
+
             # logging.info(f"Downloading file from :[{download_url}] into :[{tgz_file_path}]")
-            urllib.request.urlretrieve(download_url, tgz_file_path)
+            
+            regex = re.compile(
+                 r'^(?:http|ftp)s?://' # http:// or https://
+                 r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+                 r'localhost|' #localhost...
+                 r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+                 r'(?::\d+)?' # optional port
+                 r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+
+            print(re.match(regex, "http://www.example.com") is not None) # True
+            print(re.match(regex, "example.com") is not None)  
+
+            if(re.match(regex, download_url) is not None):
+                urllib.request.urlretrieve(download_url, tgz_file_path)
+
+            
+            else:
+                download_url=os.path.join(ROOT_DIR,download_url)
+                # src_dir=download_url..
+                # dest_dir=os.tgz_file_path("..")
+                # shutil.copytree(src_dir, dest_dir)
+                # download_url='housing\dataset'
+                shutil.copy(download_url,tgz_download_dir )
+
+                
+            
+
             # logging.info(f"File :[{tgz_file_path}] has been downloaded successfully.")
             return tgz_file_path
 
@@ -40,15 +79,45 @@ class DataIngestion:
     def extract_tgz_file(self,tgz_file_path):
         try:
             raw_data_dir = self.data_ingestion_config.raw_data_dir
+            download_url=self.data_ingestion_config.dataset_download_url
 
             if os.path.exists(raw_data_dir):
                 os.remove(raw_data_dir)
 
             os.makedirs(raw_data_dir,exist_ok=True)
+            # housing_file_name = os.path.basename(download_url)
+            # raw_file_path = os.path.join(raw_data_dir, housing_file_name)
+            # urllib.request.urlretrieve(download_url, raw_file_path)
+
+            print()
             # logging.info(f"Extracting tgz file: [{tgz_file_path}] into dir: [{raw_data_dir}]")
-            with tarfile.open(tgz_file_path) as housing_tgz_file_obj:
+            # print('tgz_file_path')
+            # with open(w,"r") as housing_tgz_file_obj:
+            #     zipfile.ZipFile(tgz_file_path, mode='w').write(tgz_file_path)
+            
+            # print(housing_tgz_file_obj)
+            # with tarfile.open(tgz_file_path) as housing_tgz_file_obj:
+            #     housing_tgz_file_obj.extractall(path=raw_data_dir)
+            
+            with ZipFile(tgz_file_path, 'r') as housing_tgz_file_obj:
+                housing_tgz_file_obj.printdir()
+                print('Extracting all the files now...')
                 housing_tgz_file_obj.extractall(path=raw_data_dir)
+            
+            
+            # with open(tgz_file_path) as housing_tgz_file_obj:
+            #     print(housing_tgz_file_obj)
+            #     raw_data_dir=housing_tgz_file_obj
+                # housing_tgz_file_obj.extractall(path=raw_data_dir)
             # logging.info(f"Extraction completed")
+            # print(tgz_file_path)
+            # f = open(tgz_file_path, "r")
+
+            # for data in f:
+            #     new_path ='raw_data_dir/'+ data
+
+            # print(new_path)
+            #   print(raw_data_dir)
 
 
         except Exception as e:
@@ -58,7 +127,7 @@ class DataIngestion:
     def split_data_as_train_test(self)->DataIngestionArtifact:
         try:
             raw_data_dir = self.data_ingestion_config.raw_data_dir
-            file_name=os.listdir(raw_data_dir)[0]
+            file_name=os.listdir(raw_data_dir)[3]   #will modify as per requirements
             housing_file_path=os.path.join(raw_data_dir,file_name)
             df=pd.read_csv(housing_file_path)
             print(df)
@@ -70,6 +139,8 @@ class DataIngestion:
             train_file_path = os.path.join(self.data_ingestion_config.ingested_train_dir, file_name)
             test_file_path = os.path.join(self.data_ingestion_config.ingested_test_dir, file_name)
             # if X_train in not None:
+            print(X_train)
+            print(X_test)
             os.makedirs(self.data_ingestion_config.ingested_train_dir,exist_ok=True)
             X_train.to_csv(train_file_path,index=False)
     
