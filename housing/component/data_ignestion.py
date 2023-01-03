@@ -11,6 +11,7 @@ import zipfile
 import re
 import shutil
 from zipfile import ZipFile
+import pandas as pd
 
 
 import os,sys
@@ -126,10 +127,37 @@ class DataIngestion:
 
     def split_data_as_train_test(self)->DataIngestionArtifact:
         try:
+            # shutil.copy(download_url,tgz_download_dir )
+
             raw_data_dir = self.data_ingestion_config.raw_data_dir
+            test_file=os.listdir(raw_data_dir)[2]
+            train_file=os.listdir(raw_data_dir)[3] 
+            test_df=os.path.join(raw_data_dir,test_file)
+            train_df=os.path.join(raw_data_dir,train_file)
+
+            test_data=pd.read_csv(test_df)
+            train_data=pd.read_csv(train_df)
+            df=pd.concat([train_data,test_data])
+
+            # train_file_path = os.path.join(self.data_ingestion_config.ingested_train_dir, train_file)
+            # test_file_path = os.path.join(self.data_ingestion_config.ingested_test_dir, test_file)
+
+            # os.makedirs(self.data_ingestion_config.ingested_train_dir,exist_ok=True)
+            # train_data.to_csv(train_file_path,index=False)
+    
+            # # if X_train in not None:
+            # os.makedirs(self.data_ingestion_config.ingested_test_dir,exist_ok=True)
+            # test_data.to_csv(test_file_path,index=False)
+
+           
+
+ 
             file_name=os.listdir(raw_data_dir)[3]   #will modify as per requirements
+            print('filename')
+            print(file_name)
+            file_name=os.listdir(raw_data_dir)[3]
             housing_file_path=os.path.join(raw_data_dir,file_name)
-            df=pd.read_csv(housing_file_path)
+            # df=pd.read_csv(housing_file_path)
             print(df)
             X=df.iloc[:,:-1]   #independent
             print(X)
@@ -141,12 +169,14 @@ class DataIngestion:
             # if X_train in not None:
             print(X_train)
             print(X_test)
+            train_data=pd.concat([X_train,y_train],axis=1)
+            test_data=pd.concat([X_test,y_test],axis=1)
             os.makedirs(self.data_ingestion_config.ingested_train_dir,exist_ok=True)
-            X_train.to_csv(train_file_path,index=False)
+            train_data.to_csv(train_file_path,index=False)
     
             # if X_train in not None:
             os.makedirs(self.data_ingestion_config.ingested_test_dir,exist_ok=True)
-            X_test.to_csv(test_file_path,index=False)
+            test_data.to_csv(test_file_path,index=False)
 
             data_ingestion_artifact = DataIngestionArtifact(train_file_path=train_file_path,
                                     test_file_path=test_file_path,
