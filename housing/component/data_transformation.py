@@ -13,7 +13,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 import pandas as pd
 from housing.constant import *
-# from housing.util.util import read_yaml_file,save_object,save_numpy_array_data,load_data
+from housing.util.util import read_yaml_file,save_object,save_numpy_array_data,load_data
 import dill
 
 
@@ -89,24 +89,24 @@ class DataTransformation:
             test_file_path = self.data_ingestion_artifact.test_file_path
             
 
-            # schema_file_path = self.data_validation_artifact.schema_file_path
+            schema_file_path = self.data_validation_artifact.schema_file_path
             
             # logging.info(f"Loading training and test data as pandas dataframe.")
-            # train_df = load_data(file_path=train_file_path, schema_file_path=schema_file_path)
+            train_df = load_data(file_path=train_file_path, schema_file_path=schema_file_path)
             
-            # test_df = load_data(file_path=test_file_path, schema_file_path=schema_file_path)
+            test_df = load_data(file_path=test_file_path, schema_file_path=schema_file_path)
 
             # schema = read_yaml_file(file_path=schema_file_path)
-            train_df=pd.read_csv(train_file_path)
-            test_df=pd.read_csv(test_file_path)
+            # train_df=pd.read_csv(train_file_path)
+            # test_df=pd.read_csv(test_file_path)   
             # target_column_name = 
 
             # logging.info(f"Splitting input and target feature from training and testing dataframe.")
-            print(train_df.columns)
-            print(test_df.columns)
+            # print(train_df.columns)
+            # print(test_df.columns)
             input_feature_train_df = train_df.drop(columns=['SalePrice'],axis=1)
             print(input_feature_train_df.columns)
-            print(train_df.columns)
+            # print(train_df.columns)
             target_feature_train_df = train_df['SalePrice']
 
             input_feature_test_df = test_df.drop(columns=['SalePrice'],axis=1)
@@ -117,11 +117,16 @@ class DataTransformation:
             # preprocessing_obj._fit_transform
             input_feature_train_arr=preprocessing_obj.fit_transform(input_feature_train_df)
             input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
+            train_arr=np.array(target_feature_train_df)
+            newarr=train_arr.reshape(978,1)
+
+            test_arr=np.array(target_feature_test_df)
+            newarr2=train_arr.reshape(978,1)
 
             #here we are again concatinating preprocessed train/test and target feature
-            # train_arr = np.c_[ input_feature_train_arr, np.array(target_feature_train_df)]
+            train_arr = np.hstack((input_feature_train_arr,np.array(target_feature_train_df)))
 
-            # test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
+            test_arr = np.hstack((input_feature_test_arr, np.array(target_feature_test_df)))
             
             transformed_train_dir = self.data_transformation_config.transformed_train_dir
             transformed_test_dir = self.data_transformation_config.transformed_test_dir
@@ -134,8 +139,8 @@ class DataTransformation:
 
             # logging.info(f"Saving transformed training and testing array.")
             
-            self.save_numpy_array_data(file_path=transformed_train_file_path,array=input_feature_train_arr)
-            self.save_numpy_array_data(file_path=transformed_test_file_path,array=input_feature_test_arr)
+            self.save_numpy_array_data(file_path=transformed_train_file_path,array=train_arr)
+            self.save_numpy_array_data(file_path=transformed_test_file_path,array=test_arr)
 
             preprocessing_obj_file_path = self.data_transformation_config.preprocessed_object_file_path
 

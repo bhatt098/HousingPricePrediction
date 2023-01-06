@@ -137,7 +137,7 @@ class DataIngestion:
 
             test_data=pd.read_csv(test_df)
             train_data=pd.read_csv(train_df)
-            df=pd.concat([train_data,test_data])
+            # df=pd.concat([train_data,test_data])
 
             # train_file_path = os.path.join(self.data_ingestion_config.ingested_train_dir, train_file)
             # test_file_path = os.path.join(self.data_ingestion_config.ingested_test_dir, test_file)
@@ -157,7 +157,7 @@ class DataIngestion:
             print(file_name)
             file_name=os.listdir(raw_data_dir)[3]
             housing_file_path=os.path.join(raw_data_dir,file_name)
-            # df=pd.read_csv(housing_file_path)
+            df=pd.read_csv(housing_file_path)
             print(df)
             X=df.iloc[:,:-1]   #independent
             print(X)
