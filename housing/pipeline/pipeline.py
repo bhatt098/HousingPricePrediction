@@ -39,10 +39,11 @@ class Pipeline:
             raise HousingException(e,sys)
 
 
-    def start_model_trainer(self, data_transformation_artifact: DataTransformationArtifact) -> ModelTrainerArtifact:
+    def start_model_trainer(self, data_transformation_artifact: DataTransformationArtifact,data_ingestion_artifact:DataIngestionArtifact) -> ModelTrainerArtifact:
         try:
             model_trainer = ModelTrainer(model_trainer_config=self.config.get_model_trainer_config(),
-                                         data_transformation_artifact=data_transformation_artifact
+                                         data_transformation_artifact=data_transformation_artifact,
+                                         data_ignestion_artifact=data_ingestion_artifact
                                          )
             return model_trainer.initiate_model_trainer()
         except Exception as e:
@@ -54,7 +55,7 @@ class Pipeline:
             data_ingestion_artifact=self.start_data_ingestion()
             data_validation_artifact=self.start_data_validation(data_ingestion_artifact=data_ingestion_artifact)
             data_transformation_artifact=self.start_data_transformation(data_ingestion_artifact,data_validation_artifact)
-            model_trainer_artifact=self.start_model_trainer(data_transformation_artifact)
+            model_trainer_artifact=self.start_model_trainer(data_transformation_artifact,data_ingestion_artifact)
 
         except Exception as e:
             raise HousingException(e,sys)        

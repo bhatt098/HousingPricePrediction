@@ -1,4 +1,5 @@
 # from cgi import test
+import pickle
 from sklearn import preprocessing
 from housing.exception import HousingException
 # from housing.logger import logging
@@ -15,13 +16,15 @@ import pandas as pd
 from housing.constant import *
 from housing.util.util import read_yaml_file,save_object,save_numpy_array_data,load_data
 import dill
+# target_feature_train_df=target_feature_test_df
+# target_feature_test_df=
 
 
 
 
 
 class DataTransformation:
-
+    
     def __init__(self, data_transformation_config: DataTransformationConfig,
                  data_ingestion_artifact: DataIngestionArtifact,
                  data_validation_artifact: DataValidationArtifact
@@ -83,7 +86,6 @@ class DataTransformation:
             # logging.info(f"Obtaining preprocessing object.")
             preprocessing_obj = self.get_data_transformer_object()
 
-
             # logging.info(f"Obtaining training and test file path.")
             train_file_path = self.data_ingestion_artifact.train_file_path
             test_file_path = self.data_ingestion_artifact.test_file_path
@@ -118,15 +120,21 @@ class DataTransformation:
             input_feature_train_arr=preprocessing_obj.fit_transform(input_feature_train_df)
             input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
             train_arr=np.array(target_feature_train_df)
-            newarr=train_arr.reshape(978,1)
+            # newarr=train_arr.reshape(978,1)
 
             test_arr=np.array(target_feature_test_df)
-            newarr2=train_arr.reshape(978,1)
+            # newarr2=train_arr.reshape(978,1)
 
             #here we are again concatinating preprocessed train/test and target feature
-            train_arr = np.hstack((input_feature_train_arr,np.array(target_feature_train_df)))
+            # train_arr = np.hstack((input_feature_train_arr,np.array(target_feature_train_df)))
 
-            test_arr = np.hstack((input_feature_test_arr, np.array(target_feature_test_df)))
+            # test_arr = np.hstack((input_feature_test_arr, np.array(target_feature_test_df)))
+
+
+            # train_arr = np.c_[ input_feature_train_arr, np.array(target_feature_train_df)]
+
+            # test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
+            print(type(input_feature_train_arr))
             
             transformed_train_dir = self.data_transformation_config.transformed_train_dir
             transformed_test_dir = self.data_transformation_config.transformed_test_dir
@@ -139,8 +147,8 @@ class DataTransformation:
 
             # logging.info(f"Saving transformed training and testing array.")
             
-            self.save_numpy_array_data(file_path=transformed_train_file_path,array=train_arr)
-            self.save_numpy_array_data(file_path=transformed_test_file_path,array=test_arr)
+            self.save_numpy_array_data(file_path=transformed_train_file_path,array=input_feature_train_arr.toarray())
+            self.save_numpy_array_data(file_path=transformed_test_file_path,array=input_feature_test_arr.toarray())
 
             preprocessing_obj_file_path = self.data_transformation_config.preprocessed_object_file_path
 
@@ -189,3 +197,18 @@ class DataTransformation:
 
     # def __del__(self):
     #     # logging.info(f"{'>>'*30}Data Transformation log completed.{'<<'*30} \n\n")
+
+
+    def save_prepocessing(self,file_path: str, array: np.array):
+     """
+     Save numpy array data to file
+     file_path: str location of file to save
+     array: np.array data to save
+     """
+     try:
+         dir_path = os.path.dirname(file_path)
+         os.makedirs(dir_path, exist_ok=True)
+         with open(file_path, 'wb') as file_obj:
+             np.save(file_obj, array)
+     except Exception as e:
+         raise HousingException(e, sys) from e

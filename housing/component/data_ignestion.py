@@ -158,7 +158,10 @@ class DataIngestion:
             file_name=os.listdir(raw_data_dir)[3]
             housing_file_path=os.path.join(raw_data_dir,file_name)
             df=pd.read_csv(housing_file_path)
-            print(df)
+            # print(df)
+            df.drop(['Id', '1stFlrSF','2ndFlrSF','BsmtHalfBath','3SsnPorch'], axis=1,inplace=True)
+            print("columns after drop")
+            print(df.columns)
             X=df.iloc[:,:-1]   #independent
             print(X)
             y=df.iloc[:,-1]    #dependent
