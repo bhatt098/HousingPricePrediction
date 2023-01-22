@@ -4,7 +4,10 @@ pandas
 sklearn
 pandas
 six
-pyyaml
+pyYAML
 scikit-learn
+dill
+gunicorn
 evidently
+matplotlib
 -e .
