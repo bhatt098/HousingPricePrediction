@@ -192,15 +192,195 @@ class HousingData:
         except Exception as e:
             raise HousingException(e, sys) from e
 
-    def get_housing_input_data_frame(self):
+    def get_housing_input_data_frame(self, MSSubClass ,
+                                   LotFrontage ,
+                                   LotArea ,
+                                   OverallQual ,
+                                   OverallCond ,
+                                   YearBuilt ,
+                                           
+                                   YearRemodAdd,
+                                   MasVnrArea ,
+                                   BsmtFinSF1 ,
+                                   BsmtFinSF2 ,
+                                           
+                                   BsmtUnfSF,
+                                   TotalBsmtSF ,
+                                           
+                                #    H1stFlrSF =H1stFlrSF,
+                                #    H2ndFlrSF = H2ndFlrSF,
+                                   LowQualFinSF,
+                                   GrLivArea,
+                                   BsmtFullBath,
+                                   FullBath ,
+                                   HalfBath ,
+                                   BedroomAbvGr,
+                                   KitchenAbvGr,
+                                   TotRmsAbvGrd,
+                                   Fireplaces ,
+                                   GarageYrBlt ,
+                                   GarageCars,
+                                   GarageArea ,
+                                   WoodDeckSF ,
+                                   OpenPorchSF ,
+                                   EnclosedPorch,
+                                #    H3SsnPorch = H3SsnPorch,
+                                           
+                                   ScreenPorch ,
+                                   PoolArea ,
+                                   MiscVal ,
+                                   MoSold,
+                                   YrSold ,
+                                   
+                                   ##      categ
+                                   MSZoning,
+                                   Street ,
+                                   Alley,
+                                   LotShape ,
+                                   LandContour ,
+                                   Utilities ,
+                                   LotConfig ,
+                                   LandSlope ,
+                                   Neighborhood,
+                                   Condition1 ,
+                                   Condition2,
+                                   BldgType ,
+                                   HouseStyle ,
+                                   RoofStyle ,
+                                   Exterior1st ,
+                                   Exterior2nd ,
+                                           
+                                   MasVnrType ,
+                                   ExterQual ,
+                                   ExterCond ,
+                                   Foundation ,
+                                   BsmtQual ,
+                                   BsmtCond ,
+                                           
+                                   BsmtExposure,
+                                   BsmtFinType1,
+                                   BsmtFinType2,
+                                   Heating ,
+                                   HeatingQC ,
+                                   CentralAir ,
+                                   Electrical ,
+                                   KitchenQual ,
+                                   Functional ,
+                                   FireplaceQu,
+                                   GarageType,
+                                   GarageFinish,
+                                   GarageQual ,
+                                   GarageCond ,
+                                   PavedDrive ,
+                                   PoolQC ,
+                                   Fence ,
+                                           
+                                   MiscFeature ,
+                                   SaleType ,
+                                   SaleCondition,
+                                   RoofMatl):
 
         try:
-            housing_input_dict = self.get_housing_data_as_dict()
-            return pd.DataFrame(housing_input_dict)
+            # housing_input_dict = self.get_housing_data_as_dict()
+            input_data = {
+                "MSSubClass":[MSSubClass],
+                "MSZoning":[MSZoning],
+
+                "LotFrontage":[LotFrontage],
+                "LotArea":[LotArea],
+                "Street" :[Street],
+                "Alley":[Alley],
+                "LotShape":[LotShape],
+                "LandContour":[LandContour],
+                "Utilities":[Utilities],
+                "LotConfig":[LotConfig ],
+                "LandSlope":[LandSlope ],
+                "Neighborhood":[Neighborhood],
+                "Condition1":[Condition1],
+                "Condition2":[Condition2],
+                "BldgType":[BldgType],
+                "HouseStyle":[HouseStyle],
+                "OverallQual":[OverallQual],
+                "OverallCond":[OverallCond],
+                "YearBuilt":[YearBuilt],
+                "YearRemodAdd":[YearRemodAdd],                
+                "RoofStyle":[RoofStyle],
+                "RoofMatl":[RoofMatl],
+
+                # ---RoofMatl need to add---
+                "Exterior1st":[Exterior1st],
+                "Exterior2nd":[Exterior2nd],
+                "MasVnrType":[MasVnrType],
+                "MasVnrArea":[MasVnrArea],
+
+                "ExterQual":[ExterQual],
+                "ExterCond":[ExterCond],
+                "Foundation":[Foundation],
+                "BsmtQual":[BsmtQual ],
+                "BsmtCond":[BsmtCond],
+                "BsmtExposure":[BsmtExposure],
+                "BsmtFinType1":[BsmtFinType1],
+                "BsmtFinSF1":[BsmtFinSF1],
+
+                "BsmtFinType2":[BsmtFinType2],
+
+                "BsmtFinSF2":[BsmtFinSF2],
+                "BsmtUnfSF":[BsmtUnfSF],
+                "TotalBsmtSF":[TotalBsmtSF],
+                "Heating":[Heating],
+                "HeatingQC":[HeatingQC],
+                "CentralAir":[CentralAir],
+                "Electrical":[Electrical],
+
+                
+                # "H1stFlrSF":[self.H1stFlrSF],
+                # "H2ndFlrSF":[self.H2ndFlrSF],
+                "LowQualFinSF":[LowQualFinSF],
+
+                "GrLivArea":[GrLivArea],
+                "BsmtFullBath":[BsmtFullBath],
+                "FullBath":[FullBath],
+                "HalfBath":[HalfBath],
+                "BedroomAbvGr":[BedroomAbvGr],
+                "KitchenAbvGr":[KitchenAbvGr],
+                "KitchenQual":[KitchenQual],
+                "TotRmsAbvGrd":[TotRmsAbvGrd],
+                "Functional":[Functional],
+                "Fireplaces":[Fireplaces],
+
+                "FireplaceQu":[FireplaceQu],
+                "GarageType":[GarageType],
+                "GarageYrBlt":[GarageYrBlt ],
+                "GarageFinish":[GarageFinish],
+                "GarageCars":[GarageCars ],
+                "GarageArea":[GarageArea ],
+                "GarageQual":[GarageQual],
+                "GarageCond":[GarageCond],
+                "PavedDrive":[PavedDrive],
+                "WoodDeckSF":[WoodDeckSF],
+                "OpenPorchSF":[OpenPorchSF ],
+                "EnclosedPorch":[EnclosedPorch],
+                # "H3SsnPorch":[self.H3SsnPorch],
+                "ScreenPorch":[ScreenPorch],
+                "PoolArea":[PoolArea],
+                "PoolQC":[PoolQC],
+                "Fence":[Fence],
+                "MiscFeature":[MiscFeature],
+                "MiscVal":[MiscVal],
+                "MoSold":[MoSold],
+                "YrSold":[YrSold],
+                "SaleType":[SaleType],
+                "SaleCondition":[SaleCondition],
+
+                }
+            
+            housing_input_dict=input_data
+            data=pd.DataFrame(housing_input_dict)
+            return data
         except Exception as e:
             raise HousingException(e, sys) from e
 
-    def get_housing_data_as_dict(self):
+    def get_housing_data_as_dict(self,):
         try:
             input_data = {
                 "MSSubClass":[self.MSSubClass],
