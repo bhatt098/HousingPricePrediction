@@ -8,4 +8,11 @@ Step2- activating conda environment
 
 Step3- install requirements.txt in your system
        pip install -r requirements.txt
+       
+       
+Step4 -Run app.py file
+       python aap.py
+       
+       
+Deployed on Render -https://housingpriceprediction.onrender.com
     
