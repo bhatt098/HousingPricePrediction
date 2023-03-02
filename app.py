@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request,send_file,abort
 from housing.entity.housing_prediction import HousingData,HousingPredictor
 import os
 HOUSING_DATA_KEY = "housing_data"
@@ -9,7 +9,38 @@ MODEL_DIR = os.path.join(ROOT_DIR, SAVED_MODELS_DIR_NAME)
 
 
 app=Flask(__name__)
+@app.route('/artifact', defaults={'req_path': 'housing'})
+@app.route('/artifact/<path:req_path>')
+def render_artifact_dir(req_path):
+    os.makedirs("housing", exist_ok=True)
+    # Joining the base and the requested path
+    print(f"req_path: {req_path}")
+    abs_path = os.path.join(req_path)
+    print(abs_path)
+    # Return 404 if path doesn't exist
+    if not os.path.exists(abs_path):
+        return abort(404)
 
+    # Check if path is a file and serve
+    if os.path.isfile(abs_path):
+        if ".html" in abs_path:
+            with open(abs_path, "r", encoding="utf-8") as file:
+                content = ''
+                for line in file.readlines():
+                    content = f"{content}{line}"
+                return content
+        return send_file(abs_path)
+
+    # Show directory contents
+    files = {os.path.join(abs_path, file_name): file_name for file_name in os.listdir(abs_path) if
+             "artifact" in os.path.join(abs_path, file_name)}
+
+    result = {
+        "files": files,
+        "parent_folder": os.path.dirname(abs_path),
+        "parent_label": abs_path
+    }
+    return render_template('artifact.html', result=result)
 @app.route('/',methods=['Get','POST'])
 def run():
     # return "kkkkkk"
