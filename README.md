@@ -15,4 +15,8 @@ Step4 -Run app.py file
        
        
 Deployed on Render -https://housingpriceprediction.onrender.com
+
+
+EDA file attached -
+PATH- https://github.com/bhatt098/HousingPricePrediction/blob/main/EDA.pdf
     
